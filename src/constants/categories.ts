@@ -4,6 +4,7 @@ export const categories: Category[] = [
   {id:'calendar',name:'Takvim',shortName:'Takvim',icon:'CalendarDays',colors:['#3D6796','#4F77A7'],ink:'#FFFFFF',description:'Birlikte planladığınız güzel günler.'},
   {id:'special-days',name:'Özel Günler',shortName:'Özel Günler',icon:'Heart',colors:['#93485F','#A66075'],ink:'#FFFFFF',description:'Hatırlamaya değer bütün tarihler.'},
   {id:'lists',name:'Listeler',shortName:'Listeler',icon:'ListChecks',colors:['#346C59','#4C806D'],ink:'#FFFFFF',description:'Küçük ihtiyaçlardan büyük hayallere.'},
+  {id:'books',name:'Kitaplar',shortName:'Kitaplar',icon:'BookOpen',colors:['#9B6B4C','#B98A68'],ink:'#FFFFFF',description:'Birlikte okuyacağınız kitaplar.'},
   {id:'notebook',name:'Not Defteri',shortName:'Not Defteri',icon:'NotebookPen',colors:['#BCBA67','#CFCD82'],ink:'#17243B',description:'Aklınızda kalmasın, burada kalsın.'},
   {id:'documents',name:'Dokümanlar',shortName:'Dokümanlar',icon:'FileText',colors:['#66758C','#68768A'],ink:'#FFFFFF',description:'Ortak dosyalarınız ve bağlantılarınız.'},
   {id:'gallery',name:'Galeri',shortName:'Galeri',icon:'Images',colors:['#62458A','#785B9F'],ink:'#FFFFFF',description:'Birlikte biriktirdiğiniz kareler.'},
@@ -19,5 +20,5 @@ export const categories: Category[] = [
   {id:'mood',name:'Ruh Halim',shortName:'Ruh Halim',icon:'Smile',colors:['#AEADD0','#C1BFDE'],ink:'#17243B',description:'Bugün nasıl hissediyorsun?'},
 ];
 export const categoryById = Object.fromEntries(categories.map(c => [c.id,c])) as Record<CategoryId,Category>;
-export const defaultHomeOrder: HomeCardId[] = ['upcoming','partner-note','mood','lists','song','special-days','notebook','documents','gallery','voice','gifts','info','places','steps','letters'];
+export const defaultHomeOrder: HomeCardId[] = ['upcoming','partner-note','mood','lists','books','song','special-days','notebook','documents','gallery','voice','gifts','info','places','steps','letters'];
 export const moods = [{label:'Harika',emoji:'🤩'},{label:'İyi',emoji:'😊'},{label:'İdare eder',emoji:'😐'},{label:'Keyifsiz',emoji:'😔'},{label:'Zorlanıyorum',emoji:'😣'},{label:'Yorgunum',emoji:'😴'},{label:'Enerjik',emoji:'💪'},{label:'Kızgın',emoji:'😡'},{label:'Sıkılmış',emoji:'😒'}];

@@ -1,4 +1,4 @@
-export type CategoryId = 'calendar' | 'special-days' | 'lists' | 'notebook' | 'documents' | 'gallery' | 'voice' | 'tasks' | 'partner-note' | 'song' | 'gifts' | 'info' | 'places' | 'steps' | 'mood' | 'letters' | 'upcoming';
+export type CategoryId = 'calendar' | 'special-days' | 'lists' | 'books' | 'notebook' | 'documents' | 'gallery' | 'voice' | 'tasks' | 'partner-note' | 'song' | 'gifts' | 'info' | 'places' | 'steps' | 'mood' | 'letters' | 'upcoming';
 export type HomeCardId = CategoryId | 'upcoming';
 export interface ListItem { id: string; text: string; done: boolean }
 export interface SharedRecord {

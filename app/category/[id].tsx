@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Linking, Modal, Pressable, RefreshControl, ScrollView, StyleSheet, TextInput, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, Image, Linking, Modal, Pressable, RefreshControl, ScrollView, StyleSheet, TextInput, useWindowDimensions, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -10,6 +10,7 @@ import { theme } from '../../src/constants/theme';
 import { useApp } from '../../src/hooks/useApp';
 import type { CategoryId, SharedRecord } from '../../src/types';
 import { localDay } from '../../src/utils/date';
+const booksCover = require('../../assets/books.png');
 
 const unsupported: Partial<Record<CategoryId, { title: string; body: string }>> = {
   gallery: { title: 'Birlikte biriktireceğiniz kareler', body: 'Fotoğraf paylaşımı bu sürümde henüz kullanıma açık değil.' },
@@ -144,7 +145,7 @@ function RecordCard({ record, category, onEdit, onDelete, onError }: { record: S
   const isPartnerNote = category.id === 'partner-note';
   const isNote = isPartnerNote || category.id === 'notebook';
   const collapsible = isNote || category.id === 'lists';
-  return <View style={[styles.recordCard, isPartnerNote && { backgroundColor: '#EEE4EE', borderColor: '#DDCBDD' }]}>
+  return <View style={[styles.recordCard, isPartnerNote && { backgroundColor: '#EEE4EE', borderColor: '#DDCBDD' }]}>{category.id === 'books' && <Image source={booksCover} resizeMode="cover" style={styles.bookCover} />}
     <View style={styles.recordTop}>
       {category.id === 'tasks' ? <Pressable accessibilityRole="checkbox" aria-checked={!!record.done} accessibilityState={{ checked: !!record.done, disabled: busy }} accessibilityLabel={`${record.title} ${record.done ? 'tamamlanmadı' : 'tamamlandı'} olarak işaretle`} onPress={() => mutate({ done: !record.done })} disabled={busy} style={styles.taskCheck}><Icon name={record.done ? 'CircleCheck' : 'Circle'} size={27} color={category.colors[0]} /></Pressable> : category.id === 'mood' ? <AppText style={{ fontSize: 34, marginRight: 3 }}>{record.mood}</AppText> : category.id === 'calendar' ? <View style={[styles.eventSymbol, { backgroundColor: `${category.colors[0]}15` }]}><Icon name="CalendarDays" size={23} color={category.colors[0]} /></View> : null}
       <Pressable accessibilityRole="button" accessibilityLabel={category.id === 'lists' ? `${record.title} listesini ${expanded ? 'kapat' : 'aç'}` : isNote ? `${record.title} notunu ${expanded ? 'kapat' : 'aç'}` : `${record.title}, düzenle`} accessibilityState={collapsible ? { expanded } : undefined} onPress={collapsible ? () => setExpanded(value => !value) : onEdit} style={{ flex: 1 }}>
@@ -187,4 +188,5 @@ const styles = StyleSheet.create({
   infoBox: { flexDirection: 'row', gap: 9, padding: 14, borderRadius: 15, backgroundColor: '#E8EDF1', marginTop: 21, alignItems: 'flex-start' }, infoText: { flex: 1, color: theme.muted, fontSize: 11, lineHeight: 18 }, comingBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 20, backgroundColor: theme.brandLight, paddingHorizontal: 12, paddingVertical: 8, marginTop: 8 }, comingLabel: { color: theme.brand, fontSize: 10, fontFamily: theme.semibold },
   pageFooter: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 6, paddingVertical: 30 }, footerText: { fontSize: 9, color: theme.muted },
   modalBackdrop: { flex: 1, backgroundColor: 'rgba(23,36,59,0.36)', alignItems: 'center', justifyContent: 'center', padding: 24 }, confirm: { width: '100%', maxWidth: 380, backgroundColor: theme.surface, borderRadius: 25, padding: 26, gap: 15 }, deleteIcon: { width: 58, height: 58, borderRadius: 22, backgroundColor: '#F1E3E8', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }, confirmTitle: { fontSize: 21, fontFamily: theme.bold, textAlign: 'center' }, confirmBody: { fontSize: 13, lineHeight: 22, color: theme.muted, textAlign: 'center', marginBottom: 7 }, unknown: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 20, padding: 25, backgroundColor: theme.background },
+  bookCover: { width: 72, height: 92, borderRadius: 10, marginBottom: 10 },
 });

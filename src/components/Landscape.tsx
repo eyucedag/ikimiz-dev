@@ -26,9 +26,11 @@ interface LandscapeProps {
   wilt: 0 | 1 | 2 | 3;
   onPlant(): void;
   onBooks(): void;
+  pigeonProgress?: number;
+  onPigeon?(): void;
 }
 
-export function Landscape({ plant, stage, wilt, onPlant, onBooks }: LandscapeProps) {
+export function Landscape({ plant, stage, wilt, onPlant, onBooks, pigeonProgress, onPigeon }: LandscapeProps) {
   const { width } = useWindowDimensions();
   const height = Math.min(190, (Math.min(width, 1040) - 48) * 235 / 760);
   const current = new Date();
@@ -40,6 +42,7 @@ export function Landscape({ plant, stage, wilt, onPlant, onBooks }: LandscapePro
     <Image source={landscapeSources[period]} resizeMode="cover" style={s.landscape} />
     <Image pointerEvents="none" source={shelfSource} resizeMode="stretch" style={s.shelfArt} />
     <Image pointerEvents="none" source={booksSource} resizeMode="contain" style={s.booksArt} />
+    {pigeonProgress !== undefined && <Pressable accessibilityRole="button" accessibilityLabel="Gelen mektubu aç" onPress={onPigeon} style={[s.pigeon, { left: width * (.72 - pigeonProgress * .46), top: height * (.18 + pigeonProgress * .39) }]}><AppText style={s.pigeonText}>🕊️</AppText></Pressable>}
     <View pointerEvents="none" style={[s.plantArt, { height: height * .84, opacity: 1 - wilt * .12, transform: [{ rotate: `${wilt * 0.7}deg` }, { scaleY: 1 - wilt * .025 }] }]}> 
       <Image source={plantSources[plant]} resizeMode="stretch" style={[s.plantStrip, { left: `${-stage * 100}%` }]} />
     </View>
@@ -60,4 +63,5 @@ const s = StyleSheet.create({
   booksHit: { position: 'absolute', left: '20%', width: '16%' },
   caption: { position: 'absolute', bottom: 13, right: 16, flexDirection: 'row', alignItems: 'center', gap: 6 },
   captionText: { fontSize: 10, color: theme.white, fontFamily: theme.medium },
+  pigeon: { position: 'absolute', top: 4, left: 0, zIndex: 5 }, pigeonText: { fontSize: 24, color: '#FFFFFF' },
 });
