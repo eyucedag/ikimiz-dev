@@ -43,7 +43,7 @@ export function Landscape({ plant, stage, wilt, onPlant, onBooks, pigeonProgress
     <Image source={landscapeSources[period]} resizeMode="cover" style={s.landscape} />
     <Image pointerEvents="none" source={shelfSource} resizeMode="stretch" style={s.shelfArt} />
     <Image pointerEvents="none" source={booksSource} resizeMode="contain" style={s.booksArt} />
-    {pigeonProgress !== undefined && <Pressable accessibilityRole="button" accessibilityLabel="Gelen mektubu aç" onPress={onPigeon} style={[s.pigeon, { left: width * (.72 - pigeonProgress * .46), top: height * (.18 + pigeonProgress * .39) }]}><AppText style={[s.pigeonText, { transform: [{ scale: pigeonMirrored ? 0.55 + pigeonProgress * 0.45 : 0.55 + pigeonProgress * 0.45 }, { scaleX: pigeonMirrored ? -1 : 1 }] } ]}>🕊️</AppText></Pressable>}
+    {pigeonProgress !== undefined && <Pressable accessibilityRole="button" accessibilityLabel="Gelen mektubu aç" onPress={onPigeon} style={[s.pigeon, { left: width * (.72 - pigeonProgress * .46), top: height * (.18 + pigeonProgress * .50) }]}><AppText style={[s.pigeonText, { transform: [{ scale: pigeonMirrored ? 0.55 + pigeonProgress * 0.45 : 0.55 + pigeonProgress * 0.45 }, { scaleX: pigeonMirrored ? -1 : 1 }] } ]}>🕊️</AppText></Pressable>}
     <View pointerEvents="none" style={[s.plantArt, { height: height * .84, opacity: 1 - wilt * .12, transform: [{ rotate: `${wilt * 0.7}deg` }, { scaleY: 1 - wilt * .025 }] }]}> 
       <Image source={plantSources[plant]} resizeMode="stretch" style={[s.plantStrip, { left: `${-stage * 100}%` }]} />
     </View>
