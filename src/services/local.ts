@@ -44,7 +44,7 @@ export function validateRecord(input: RecordInput): RecordInput {
   if (result.category === 'partner-note' && (result.body || result.title).length > 140) {
     throw new Error('Partner notu en fazla 140 karakter olabilir.');
   }
-  if (result.url) {
+  if (result.url && result.category !== 'gallery') {
     result.url = result.url.trim();
     try {
       const url = new URL(result.url);
