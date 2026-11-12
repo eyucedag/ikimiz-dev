@@ -177,7 +177,7 @@ const s = StyleSheet.create({
   kiss: { width: 44, height: 44, borderRadius: 16, alignItems: 'center', justifyContent: 'center', backgroundColor: '#EEE0E5' },
   kissIcon: { fontSize: 21, lineHeight: 25 },
   customize: { width: 44, height: 44, borderRadius: 16, alignItems: 'center', justifyContent: 'center', backgroundColor: '#E8ECEF' },
-  button: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#4B5561', borderRadius: 18, paddingHorizontal: 11, minHeight: 44 },
+  button: { width: 145, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: '#4B5561', borderRadius: 18, paddingHorizontal: 11, minHeight: 44 },
   waiting: { backgroundColor: '#2676C7' }, together: { backgroundColor: '#346C59' },
   label: { color: '#FFFFFF', fontSize: 11, fontFamily: theme.semibold },
   dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#AEB8BE' }, dotActive: { backgroundColor: '#FFFFFF' },
