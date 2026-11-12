@@ -19,5 +19,5 @@ export const categories: Category[] = [
   {id:'mood',name:'Ruh Halim',shortName:'Ruh Halim',icon:'Smile',colors:['#AEADD0','#C1BFDE'],ink:'#17243B',description:'Bugün nasıl hissediyorsun?'},
 ];
 export const categoryById = Object.fromEntries(categories.map(c => [c.id,c])) as Record<CategoryId,Category>;
-export const defaultHomeOrder: HomeCardId[] = ['upcoming','partner-note','mood','lists','song','tasks','calendar','special-days','notebook','documents','gallery','voice','gifts','info','places','steps','letters'];
+export const defaultHomeOrder: HomeCardId[] = ['upcoming','partner-note','mood','lists','song','special-days','notebook','documents','gallery','voice','gifts','info','places','steps','letters'];
 export const moods = [{label:'Harika',emoji:'🤩'},{label:'İyi',emoji:'😊'},{label:'İdare eder',emoji:'😐'},{label:'Keyifsiz',emoji:'😔'},{label:'Zorlanıyorum',emoji:'😣'},{label:'Yorgunum',emoji:'😴'},{label:'Enerjik',emoji:'💪'},{label:'Kızgın',emoji:'😡'},{label:'Sıkılmış',emoji:'😒'}];
