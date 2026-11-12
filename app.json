@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "İkimiz",
+    "slug": "ikimiz",
+    "scheme": "ikimiz",
+    "version": "0.1.0",
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/6d0fb1e3-3583-4131-8f52-2c356a4066cd"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6d0fb1e3-3583-4131-8f52-2c356a4066cd"
+      }
+    },
+    "orientation": "default",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F1F3F6",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ikimiz.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Aşkım nerdesin? özelliği açıkken partnerinizin yönünü paylaşmak için konumunuzu kullanırız."
+      }
+    },
+    "android": {
+      "package": "com.ikimiz.app",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ],
+      "predictiveBackGestureEnabled": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "name": "İkimiz — Ortak Yuvanız",
+      "description": "Birlikte kurduğunuz hayatın küçük, güzel detayları.",
+      "favicon": "./assets/icon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Aşkım nerdesin? özelliği açıkken yönünüzü partnerinizle paylaşmak için konumunuzu kullanırız."
+        }
+      ],
+      "@react-native-community/datetimepicker"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "icon": "./assets/icon.png"
+  }
+}

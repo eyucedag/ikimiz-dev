@@ -1,0 +1,13 @@
+import React, { useState } from 'react';
+import { Pressable, StyleSheet, TextInput, View, useWindowDimensions } from 'react-native';
+import { router } from 'expo-router';
+import { categories } from '../../src/constants/categories';
+import { theme } from '../../src/constants/theme';
+import { AppText, common, Gradient, Icon, Screen } from '../../src/components/ui';
+
+export default function CategoriesScreen(){
+ const [query,setQuery]=useState(''); const {width}=useWindowDimensions(); const columns=width>850?5:width>580?4:3;
+ const filtered=categories.filter(c=>c.name.toLocaleLowerCase('tr-TR').includes(query.toLocaleLowerCase('tr-TR')));
+ return <Screen><View style={s.header}><AppText style={common.overline}>İKİNİZE AİT BİR DÜNYA</AppText><AppText style={common.title}>Kategoriler</AppText><AppText style={common.subtitle}>Hayatın her hâli, aynı yuvada.</AppText></View><View style={s.search}><Icon name="Search" size={18} color={theme.muted}/><TextInput accessibilityLabel="Kategori ara" placeholder="Ne yapmak istersiniz?" value={query} onChangeText={setQuery} placeholderTextColor={theme.muted} style={s.searchInput}/>{!!query&&<Pressable accessibilityLabel="Aramayı temizle" onPress={()=>setQuery('')}><Icon name="X" size={17}/></Pressable>}</View><View style={s.grid}>{filtered.map(c=><Pressable accessibilityRole="button" accessibilityLabel={c.name} key={c.id} onPress={()=>router.push(`/category/${c.id}`)} style={({pressed})=>[s.item,{width:`${100/columns}%`,opacity:pressed?.65:1}]}><Gradient colors={c.colors} style={s.circle}><Icon name={c.icon} color={c.ink} size={29} strokeWidth={1.6}/></Gradient><AppText style={s.name}>{c.name}</AppText></Pressable>)}</View>{!filtered.length&&<AppText style={[common.subtitle,{textAlign:'center',marginVertical:30}]}>Bu isimde bir kategori bulunamadı.</AppText>}<View style={s.footer}><Icon name="Heart" size={13} color={theme.brand}/><AppText style={s.footerText}>Küçük şeyler, güzel bir hayat.</AppText></View></Screen>;
+}
+const s=StyleSheet.create({header:{gap:9,marginBottom:25,marginTop:8},search:{flexDirection:'row',alignItems:'center',gap:10,paddingHorizontal:15,backgroundColor:'#E8ECEF',borderRadius:14,marginBottom:17},searchInput:{height:45,flex:1,fontFamily:theme.font,fontSize:13,color:theme.text,outlineWidth:0},grid:{flexDirection:'row',flexWrap:'wrap',marginHorizontal:-10},item:{minHeight:133,alignItems:'center',paddingVertical:16,paddingHorizontal:7,gap:11},circle:{width:65,height:65,borderRadius:33,alignItems:'center',justifyContent:'center'},name:{fontFamily:theme.bold,fontSize:12,lineHeight:18,textAlign:'center',maxWidth:120},footer:{flexDirection:'row',justifyContent:'center',alignItems:'center',gap:7,marginTop:32,marginBottom:10},footerText:{fontSize:11,color:theme.muted}});
