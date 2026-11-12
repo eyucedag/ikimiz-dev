@@ -45,7 +45,7 @@ export async function loadCloudData(userId: string, coupleId: string | null): Pr
     partnerName = partner.data.display_name || partner.data.full_name || '';
   }
   return {
-    records: ((records.data || []) as RecordRow[]).map(fromRow),
+    records: Array.from(new Map(((records.data || []) as RecordRow[]).map(fromRow).map(record => [record.id, record])).values()),
     profile: { name: own.data?.display_name || own.data?.full_name || '', partnerName,
       relationshipDate: couple.data?.relationship_date || '' },
     sharedSettings: {
