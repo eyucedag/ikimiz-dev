@@ -13,7 +13,6 @@ import { localDay } from '../../src/utils/date';
 const booksCover = require('../../assets/books.png');
 
 const unsupported: Partial<Record<CategoryId, { title: string; body: string }>> = {
-  gallery: { title: 'Birlikte biriktireceğiniz kareler', body: 'Fotoğraf paylaşımı bu sürümde henüz kullanıma açık değil.' },
   voice: { title: 'Bazı anılar sesinizle güzel', body: 'Sesli anı kaydı bu sürümde henüz kullanıma açık değil.' },
   steps: { title: 'Her adımda biraz daha birlikte', body: 'Adım sayımı bu sürümde henüz kullanıma açık değil.' },
 };
@@ -135,6 +134,7 @@ function RecordCard({ record, category, onEdit, onDelete, onError }: { record: S
   const [busy, setBusy] = useState(false);
   const [newItem, setNewItem] = useState('');
   const [expanded, setExpanded] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
   const [renderedAt] = useState(() => Date.now());
   const flightMinutes = record.distanceKm === undefined ? 0 : Math.max(1, Math.ceil(record.distanceKm / 60 * 60));
   const flightLabel = flightMinutes < 60 ? `${flightMinutes} dakika` : `${Math.floor(flightMinutes / 60)} saat ${flightMinutes % 60 ? `${flightMinutes % 60} dakika` : ''}`.trim();
@@ -146,7 +146,7 @@ function RecordCard({ record, category, onEdit, onDelete, onError }: { record: S
   const isPartnerNote = category.id === 'partner-note';
   const isNote = isPartnerNote || category.id === 'notebook';
   const collapsible = isNote || category.id === 'lists';
-  return <View style={[styles.recordCard, isPartnerNote && { backgroundColor: '#EEE4EE', borderColor: '#DDCBDD' }]}>{category.id === 'books' && <Image source={booksCover} resizeMode="cover" style={styles.bookCover} />}
+  return <View style={[styles.recordCard, isPartnerNote && { backgroundColor: '#EEE4EE', borderColor: '#DDCBDD' }]}>{category.id === 'gallery' && record.url && <Pressable onPress={()=>setGalleryOpen(true)}><View style={styles.polaroid}><Image source={{uri:record.url}} resizeMode="cover" style={styles.galleryImage}/><AppText style={styles.polaroidTitle}>{record.title}</AppText></View></Pressable>}{category.id === 'books' && <Image source={booksCover} resizeMode="cover" style={styles.bookCover} />}
     <View style={styles.recordTop}>
       {category.id === 'tasks' ? <Pressable accessibilityRole="checkbox" aria-checked={!!record.done} accessibilityState={{ checked: !!record.done, disabled: busy }} accessibilityLabel={`${record.title} ${record.done ? 'tamamlanmadı' : 'tamamlandı'} olarak işaretle`} onPress={() => mutate({ done: !record.done })} disabled={busy} style={styles.taskCheck}><Icon name={record.done ? 'CircleCheck' : 'Circle'} size={27} color={category.colors[0]} /></Pressable> : category.id === 'mood' ? <AppText style={{ fontSize: 34, marginRight: 3 }}>{record.mood}</AppText> : category.id === 'calendar' ? <View style={[styles.eventSymbol, { backgroundColor: `${category.colors[0]}15` }]}><Icon name="CalendarDays" size={23} color={category.colors[0]} /></View> : null}
       <Pressable accessibilityRole="button" accessibilityLabel={category.id === 'lists' ? `${record.title} listesini ${expanded ? 'kapat' : 'aç'}` : isNote ? `${record.title} notunu ${expanded ? 'kapat' : 'aç'}` : `${record.title}, düzenle`} accessibilityState={collapsible ? { expanded } : undefined} onPress={collapsible ? () => setExpanded(value => !value) : onEdit} style={{ flex: 1 }}>
@@ -165,7 +165,7 @@ function RecordCard({ record, category, onEdit, onDelete, onError }: { record: S
     </View>}
     {!!record.url && (!isNote || expanded) && <Pressable accessibilityRole="link" onPress={openLink} style={[styles.linkButton, { backgroundColor: `${category.colors[0]}0C` }]}><Icon name={category.id === 'song' ? 'Play' : 'ExternalLink'} color={category.colors[0]} size={16} /><AppText style={{ color: category.colors[0], fontSize: 12, fontFamily: theme.bold, flex: 1 }} numberOfLines={1}>{category.id === 'song' ? 'Şarkıyı dinle' : category.id === 'gifts' ? 'Hediyeye göz at' : record.url.replace(/^https?:\/\//, '')}</AppText><Icon name="ArrowUpRight" size={14} color={category.colors[0]} /></Pressable>}
     {isPartnerNote && expanded && <AppText style={styles.noteTime}>{author} · {new Date(record.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })} · {new Date(record.createdAt).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</AppText>}
-    {busy && <ActivityIndicator color={category.colors[0]} size="small" style={{ marginTop: 8 }} />}
+    {busy && <ActivityIndicator color={category.colors[0]} size="small" style={{ marginTop: 8 }} />}<Modal visible={galleryOpen} transparent animationType="fade" onRequestClose={()=>setGalleryOpen(false)}><View style={styles.galleryBackdrop}><Pressable onPress={()=>setGalleryOpen(false)} style={styles.galleryClose}><Icon name="X" color="#FFF" size={22}/></Pressable><View style={styles.fullPolaroid}><Image source={{uri:record.url}} resizeMode="contain" style={styles.fullGalleryImage}/><AppText style={styles.fullPolaroidTitle}>{record.title}</AppText></View></View></Modal>
   </View>;
 }
 
@@ -174,6 +174,7 @@ function message(error: unknown) { return error instanceof Error ? error.message
 
 const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: theme.background }, scroll: { paddingBottom: 30 }, content: { width: '100%', maxWidth: 760, alignSelf: 'center' },
+  polaroid: { backgroundColor: '#FFFDF9', padding: 9, paddingBottom: 14, borderRadius: 3, shadowColor: '#17243B', shadowOpacity: .12, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, elevation: 3 }, galleryImage: { width: 92, height: 92 }, polaroidTitle: { fontSize: 11, color: '#59453A', fontFamily: theme.semibold, textAlign: 'center', marginTop: 8 }, galleryBackdrop: { flex: 1, backgroundColor: 'rgba(15,20,30,.9)', alignItems: 'center', justifyContent: 'center', padding: 24 }, galleryClose: { position: 'absolute', top: 50, right: 22, zIndex: 2, padding: 10 }, fullPolaroid: { backgroundColor: '#FFFDF9', padding: 14, paddingBottom: 20, width: '92%', maxWidth: 520, transform: [{ rotate: '-1deg' }] }, fullGalleryImage: { width: '100%', aspectRatio: 1 }, fullPolaroidTitle: { fontSize: 16, color: '#59453A', fontFamily: theme.semibold, textAlign: 'center', marginTop: 12 },
   topBar: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 18 }, back: { width: 34, height: 40, justifyContent: 'center' }, topBarTitle: { flex: 1, fontSize: 25, fontFamily: theme.extrabold, letterSpacing: -0.9 }, addCircle: { width: 41, height: 41, borderRadius: 21, alignItems: 'center', justifyContent: 'center' },
   intro: { flexDirection: 'row', alignItems: 'center', gap: 13, marginBottom: 18 }, categorySymbol: { width: 58, height: 58, borderRadius: 21, justifyContent: 'center', alignItems: 'center' }, description: { fontSize: 14, lineHeight: 21, fontFamily: theme.semibold }, sharedLabel: { fontSize: 10, color: theme.muted, marginTop: 3 }, count: { minWidth: 30, padding: 7, borderRadius: 11, backgroundColor: '#FFFFFF', alignItems: 'center' },
   sectionHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 11, marginTop: 4 }, sectionTitle: { fontSize: 17, fontFamily: theme.extrabold, flex: 1, letterSpacing: -0.4 }, smallMuted: { fontSize: 10, color: theme.muted, lineHeight: 16 }, moodDayGroup: { gap: 7 }, moodDayTitle: { fontSize: 13, fontFamily: theme.bold, color: theme.muted, textTransform: 'capitalize' }, moodDayRows: { gap: 8 },

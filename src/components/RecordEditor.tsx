@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import DateTimePicker, { type DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import * as Location from 'expo-location';
+import * as ImagePicker from 'expo-image-picker';
 import { AppText, Button, Field, Icon } from './ui';
 import { moods, type Category } from '../constants/categories';
 import { theme } from '../constants/theme';
@@ -14,7 +15,7 @@ import { useAuth } from '../hooks/useAuth';
 export const createLabels: Record<string, string> = {
   calendar: 'Etkinlik ekle', 'special-days': 'Özel gün ekle', lists: 'Liste oluştur', notebook: 'Not ekle',
   documents: 'Bağlantı ekle', tasks: 'Görev ekle', 'partner-note': 'Not bırak', song: 'Şarkı ekle',
-  gifts: 'Hediye fikri ekle', info: 'Bilgi ekle', places: 'Yer ekle', mood: 'Ruh hâlini paylaş', letters: 'Mektup gönder',
+  gifts: 'Hediye fikri ekle', info: 'Bilgi ekle', places: 'Yer ekle', mood: 'Ruh hâlini paylaş', letters: 'Mektup gönder', gallery: 'Fotoğraf ekle',
 };
 
 interface Props { category: Category; record?: SharedRecord; visible: boolean; onClose: () => void; initialDate?: string }
@@ -66,6 +67,7 @@ function RecordEditorForm({ category, record, visible, onClose, initialDate }: P
   const [time, setTime] = useState(record?.time ?? '');
   const [location, setLocation] = useState(record?.location ?? '');
   const [url, setUrl] = useState(record?.url ?? '');
+  const [galleryUri, setGalleryUri] = useState(record?.url ?? '');
   const [price, setPrice] = useState(record?.price ?? '');
   const [mood, setMood] = useState(record?.mood ?? '');
   const [specialDayType, setSpecialDayType] = useState<'birthday' | 'anniversary' | 'other'>(record?.specialDayType ?? 'other');
@@ -110,6 +112,7 @@ function RecordEditorForm({ category, record, visible, onClose, initialDate }: P
     if (id === 'letters') finalTitle = 'Güvercinli mektup';
     if (id === 'mood') finalTitle = moods.find(value => value.emoji === mood)?.label ?? '';
     if (!finalTitle) { setError(id === 'mood' ? 'Nasıl hissettiğini seç.' : 'Bir başlık yaz.'); return; }
+    if (id === 'gallery' && !galleryUri) { setError('Önce bir fotoğraf seç.'); return; }
     if (['partner-note', 'letters'].includes(id) && !body.trim()) { setError('Göndermek istediğin notu yaz.'); return; }
     if (id === 'info' && !body.trim()) { setError('Bu bilgi için bir değer yaz.'); return; }
     const dated = ['calendar', 'special-days', 'places', 'mood', 'song'].includes(id);
@@ -149,6 +152,7 @@ function RecordEditorForm({ category, record, visible, onClose, initialDate }: P
     if (id === 'lists') input.items = itemText.trim() ? [...items, { id: `item-${Date.now()}`, text: itemText.trim(), done: false }] : items;
     if (id === 'tasks') input.done = record?.done ?? false;
     if (['documents', 'song', 'gifts'].includes(id)) input.url = url.trim();
+    if (id === 'gallery') input.url = galleryUri;
     if (id === 'gifts') input.price = price.trim();
     if (id === 'places') input.location = location.trim();
     if (id === 'mood') input.mood = mood;
@@ -172,6 +176,7 @@ function RecordEditorForm({ category, record, visible, onClose, initialDate }: P
         </View>
         <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.form}>
           {hasTitle && id !== 'letters' && <Field label={id === 'song' ? 'Şarkı adı' : id === 'lists' ? 'Liste adı' : id === 'places' ? 'Şehir / ülke' : id === 'documents' ? 'Görünen ad' : 'Başlık'} value={title} onChangeText={setTitle} placeholder={id === 'calendar' ? 'Birlikte ne yapıyoruz?' : id === 'lists' ? 'Örn. Haftalık alışveriş' : 'Buraya yaz…'} maxLength={200} autoFocus={Platform.OS === 'web'} />}
+          {id === 'gallery' && <Button label={galleryUri ? 'Fotoğrafı değiştir' : 'Fotoğraf seç'} icon="Images" onPress={()=>{void (async()=>{const permission=await ImagePicker.requestMediaLibraryPermissionsAsync();if(!permission.granted){setError('Galeri izni gerekli.');return;}const result=await ImagePicker.launchImageLibraryAsync({mediaTypes:['images'],allowsEditing:true,aspect:[1,1],quality:.85});if(!result.canceled)setGalleryUri(result.assets[0].uri);})();}}/>}
           {id === 'mood' && <View style={styles.moodGrid}>{moods.map(value => <Pressable key={value.label} onPress={() => setMood(value.emoji)} accessibilityRole="button" accessibilityLabel={value.label} aria-selected={mood === value.emoji} aria-pressed={mood === value.emoji} accessibilityState={{ selected: mood === value.emoji }} style={[styles.moodChoice, mood === value.emoji && { borderColor: category.colors[0], backgroundColor: '#E8E6F2' }]}><AppText style={{ fontSize: 29 }}>{value.emoji}</AppText><AppText style={styles.moodLabel}>{value.label}</AppText></Pressable>)}</View>}
           {id === 'special-days' && <View><AppText style={styles.fieldLabel}>Özel gün türü</AppText><View style={styles.chips}>{([{ id: 'birthday', name: 'Doğum günü' }, { id: 'anniversary', name: 'Yıl dönümü' }, { id: 'other', name: 'Diğer' }] as const).map(item => <Pressable key={item.id} onPress={() => setSpecialDayType(item.id)} accessibilityRole="button" aria-selected={specialDayType === item.id} aria-pressed={specialDayType === item.id} accessibilityState={{ selected: specialDayType === item.id }} style={[styles.chip, specialDayType === item.id && { backgroundColor: category.colors[0], borderColor: category.colors[0] }]}><AppText style={{ fontSize: 12, fontFamily: theme.semibold, color: specialDayType === item.id ? '#FFF' : theme.text }}>{item.name}</AppText></Pressable>)}</View>{specialDayType !== 'other' && <AppText style={styles.hint}>Her yıl aynı gün hatırlanır.</AppText>}</View>}
           {['calendar', 'special-days', 'places'].includes(id) && <View style={styles.row}><DateField label="Tarih" value={date} onChange={setDate} />{id === 'calendar' && <TimeField label="Saat (isteğe bağlı)" value={time} onChange={setTime} />}</View>}
