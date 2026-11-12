@@ -32,6 +32,18 @@ function timeValue(value: string) {
   return result;
 }
 
+async function imageUriAsDataUri(uri: string, mimeType = 'image/jpeg') {
+  if (uri.startsWith('data:')) return uri;
+  const response = await fetch(uri);
+  const blob = await response.blob();
+  return await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Fotoğraf okunamadı.'));
+    reader.onloadend = () => resolve(String(reader.result));
+    reader.readAsDataURL(blob);
+  });
+}
+
 function DateField({ value, onChange, label }: { value: string; onChange: (value: string) => void; label: string }) {
   const [open, setOpen] = useState(false);
   const handleChange = (event: DateTimePickerEvent, selected?: Date) => {
@@ -176,7 +188,7 @@ function RecordEditorForm({ category, record, visible, onClose, initialDate }: P
         </View>
         <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.form}>
           {hasTitle && id !== 'letters' && <Field label={id === 'song' ? 'Şarkı adı' : id === 'lists' ? 'Liste adı' : id === 'places' ? 'Şehir / ülke' : id === 'documents' ? 'Görünen ad' : 'Başlık'} value={title} onChangeText={setTitle} placeholder={id === 'calendar' ? 'Birlikte ne yapıyoruz?' : id === 'lists' ? 'Örn. Haftalık alışveriş' : 'Buraya yaz…'} maxLength={200} autoFocus={Platform.OS === 'web'} />}
-          {id === 'gallery' && <Button label={galleryUri ? 'Fotoğrafı değiştir' : 'Fotoğraf seç'} icon="Images" onPress={()=>{void (async()=>{const permission=await ImagePicker.requestMediaLibraryPermissionsAsync();if(!permission.granted){setError('Galeri izni gerekli.');return;}const result=await ImagePicker.launchImageLibraryAsync({mediaTypes:['images'],allowsEditing:true,aspect:[1,1],quality:.75,base64:true,exif:true});if(!result.canceled){const asset=result.assets[0];setGalleryUri(asset.base64 ? `data:${asset.mimeType || 'image/jpeg'};base64,${asset.base64}` : asset.uri);const raw=(asset.exif as Record<string,unknown>|undefined)?.DateTimeOriginal;const match=typeof raw==='string'?raw.match(/^(\d{4})[:\-](\d{2})[:\-](\d{2})/):null;if(match)setDate(`${match[1]}-${match[2]}-${match[3]}`);}})();}}/>}
+          {id === 'gallery' && <Button label={galleryUri ? 'Fotoğrafı değiştir' : 'Fotoğraf seç'} icon="Images" onPress={()=>{void (async()=>{const permission=await ImagePicker.requestMediaLibraryPermissionsAsync();if(!permission.granted){setError('Galeri izni gerekli.');return;}const result=await ImagePicker.launchImageLibraryAsync({mediaTypes:['images'],allowsEditing:true,aspect:[1,1],quality:.75,base64:true,exif:true});if(!result.canceled){const asset=result.assets[0];try{setGalleryUri(asset.base64 ? `data:${asset.mimeType || 'image/jpeg'};base64,${asset.base64}` : await imageUriAsDataUri(asset.uri,asset.mimeType));}catch{setError('Fotoğraf ortak alana hazırlanamadı.');return;}const raw=(asset.exif as Record<string,unknown>|undefined)?.DateTimeOriginal;const match=typeof raw==='string'?raw.match(/^(\d{4})[:\-](\d{2})[:\-](\d{2})/):null;if(match)setDate(`${match[1]}-${match[2]}-${match[3]}`);}})();}}/>}
           {id === 'mood' && <View style={styles.moodGrid}>{moods.map(value => <Pressable key={value.label} onPress={() => setMood(value.emoji)} accessibilityRole="button" accessibilityLabel={value.label} aria-selected={mood === value.emoji} aria-pressed={mood === value.emoji} accessibilityState={{ selected: mood === value.emoji }} style={[styles.moodChoice, mood === value.emoji && { borderColor: category.colors[0], backgroundColor: '#E8E6F2' }]}><AppText style={{ fontSize: 29 }}>{value.emoji}</AppText><AppText style={styles.moodLabel}>{value.label}</AppText></Pressable>)}</View>}
           {id === 'special-days' && <View><AppText style={styles.fieldLabel}>Özel gün türü</AppText><View style={styles.chips}>{([{ id: 'birthday', name: 'Doğum günü' }, { id: 'anniversary', name: 'Yıl dönümü' }, { id: 'other', name: 'Diğer' }] as const).map(item => <Pressable key={item.id} onPress={() => setSpecialDayType(item.id)} accessibilityRole="button" aria-selected={specialDayType === item.id} aria-pressed={specialDayType === item.id} accessibilityState={{ selected: specialDayType === item.id }} style={[styles.chip, specialDayType === item.id && { backgroundColor: category.colors[0], borderColor: category.colors[0] }]}><AppText style={{ fontSize: 12, fontFamily: theme.semibold, color: specialDayType === item.id ? '#FFF' : theme.text }}>{item.name}</AppText></Pressable>)}</View>{specialDayType !== 'other' && <AppText style={styles.hint}>Her yıl aynı gün hatırlanır.</AppText>}</View>}
           {['calendar', 'special-days', 'places'].includes(id) && <View style={styles.row}><DateField label="Tarih" value={date} onChange={setDate} />{id === 'calendar' && <TimeField label="Saat (isteğe bağlı)" value={time} onChange={setTime} />}</View>}
