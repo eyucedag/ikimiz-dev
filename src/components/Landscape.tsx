@@ -58,7 +58,7 @@ const s = StyleSheet.create({
   landscape: { position: 'absolute', inset: 0, width: '100%', height: '100%' },
   plantArt: { position: 'absolute', left: '1.5%', bottom: '11.5%', width: '19%', overflow: 'hidden' },
   plantStrip: { position: 'absolute', top: 0, width: '400%', height: '100%' },
-  booksArt: { position: 'absolute', left: '15%', top: '37%', width: '20%', height: '52%' },
+  booksArt: { position: 'absolute', left: '15%', top: '31%', width: '27%', height: '58%' },
   shelfArt: { position: 'absolute', left: '2.6%', top: '85.5%', width: '31%', height: '10%' },
   plantHit: { position: 'absolute', left: 0, top: 8, width: '22%' },
   booksHit: { position: 'absolute', left: '13%', width: '19%' },
