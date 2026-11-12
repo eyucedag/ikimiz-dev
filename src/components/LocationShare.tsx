@@ -154,7 +154,7 @@ export function LocationShare({ onLetter, onKiss, onCustomize, kissDisabled }: {
     <View style={s.controls}>{onCustomize && <Pressable accessibilityRole="button" accessibilityLabel="Ana ekran kartlarını düzenle" onPress={onCustomize} style={s.customize}><Icon name="SlidersHorizontal" size={18} color={theme.muted} /></Pressable>}{onKiss && <Pressable accessibilityRole="button" accessibilityLabel="Partnerine öpücük gönder" disabled={kissDisabled} onPress={onKiss} style={s.kiss}><AppText style={s.kissIcon}>💋</AppText></Pressable>}{onLetter && <Pressable accessibilityRole="button" accessibilityLabel="Mektup gönder" onPress={onLetter} style={s.letter}><Icon name="Send" size={17} color="#FFFFFF" /><AppText style={s.letterText}>Mektup</AppText></Pressable>}
     <Pressable accessibilityRole="button" accessibilityLabel="Aşkım nerdesin?" accessibilityState={{ busy, selected: active }} accessibilityHint={active ? 'Konum paylaşımını durdurur' : 'Konum paylaşımını başlatır'} disabled={busy} onPress={toggle} style={[s.button, someoneActive && s.waiting, bothActive && s.together]}>
       {busy ? <ActivityIndicator size="small" color="#FFFFFF" /> : <Icon name="MapPin" size={17} color="#FFFFFF" />}
-      <AppText style={s.label}>{!active && !partnerActive ? 'Konum paylaşımı kapalı' : 'Aşkım nerdesin?'}</AppText>
+      <AppText style={s.label}>Aşkım nerdesin?</AppText>
     </Pressable></View>
     {direction ? <View style={s.partner}>
       <View accessibilityLabel={direction.rotation === null ? 'Yan yanasınız' : 'Partnerinin yönünü gösteren ok'} style={s.arrowCircle}>
